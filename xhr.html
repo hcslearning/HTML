@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es">
+<head>
+	<meta charset="utf-8">
+	<title>Hello, world!</title>
+</head>
+<body>
+	<h1>XMLHttpRequest - Javascript</h1>
+
+	<h2>Blackboard</h2>
+	<div id="contenido">
+
+	</div>
+
+	<h2>Request</h2>
+	<ol>
+		<li>
+			<button type="button" onclick="cleanBlackBoard()">Clear</button>
+		</li>
+		<li>
+			<button type="button" onclick="getUsers()">GET - /users</button>
+		</li>
+		<li>
+			<input type="file" name="archivo" onchange="fileUpload(this)" />
+			<p>XHR file upload</p>
+		</li>
+	</ol>
+
+	<h2>HTTP Request Simulations</h2>
+
+		<h3>Form 1 - GET</h3>
+		<form method="GET" action="http://localhost:4000">
+			<input type="hidden" name="nombre" value="Soy un input escondido" />
+			<input type="hidden" name="variable" value="Soy una variable escondida" />
+			<button type="submit">Enviar Form 1</button>
+		</form>	
+		<p>req.url = '/?nombre=Soy+un+input+escondido&variable=Soy+una+variable+escondida'</p>
+
+		<h3>Form 2 - POST</h3>
+		<form method="POST" action="http://localhost:4000">
+			<input type="hidden" name="nombre" value="Soy un input escondido" />
+			<input type="hidden" name="variable" value="Soy una variable escondida" />
+			<button type="submit">Enviar Form 2</button>
+		</form>	
+		<p>body: 'nombre=Soy+un+input+escondido&variable=Soy+una+variable+escondida'</p>
+
+		<h3>Form 3 - POST + FILE</h3>
+		<form method="POST" action="http://localhost:4000" enctype="multipart/form-data">
+			<input type="hidden" name="nombre" value="Soy un input escondido" />
+			<input type="hidden" name="variable" value="Soy una variable escondida" />
+			<input type="file" name="imagen" /><br /><br />
+			<button type="submit">Enviar Form 3</button>
+		</form>	
+
+		<h3>Form 4 - POST (text/plain)</h3>
+		<form method="POST" action="http://localhost:4000" enctype="text/plain">
+			<input type="hidden" name="nombre" value="Soy un input escondido" />
+			<input type="hidden" name="variable" value="Soy una variable escondida" />
+			<button type="submit">Enviar Form 4</button>
+		</form>	
+		<p>body: 'nombre=Soy un input escondido\r\nvariable=Soy una variable escondida\r\n'</p>
+
+	<script>
+		const cleanBlackBoard = () => {
+			console.log("cleanBlackBoard()")
+			document.getElementById("contenido").innerHTML = ""
+		}
+
+		const getUsers = () => {
+			console.log("getUsers()")
+			const xhr = new XMLHttpRequest()
+			xhr.addEventListener('load', function(){
+				const resultado = JSON.parse( this.responseText )				
+				const contenedor = document.getElementById("contenido")
+				resultado.forEach((item, index) => {
+					const node = document.createElement("div")
+					node.innerHTML = (index+1) + ". " + item.username + " " + item.email
+					contenedor.appendChild( node )
+				})
+			})
+			xhr.open('GET', 'https://jsonplaceholder.typicode.com/users')
+			xhr.send()
+		}
+
+		const fileUpload = (fileInput) => {
+			console.log('fileInput')
+		}
+	</script>
+</body>
+</html>

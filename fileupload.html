@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es">
+<head>
+	<meta charset="utf-8">
+	<title>Hello, world!</title>
+</head>
+<body>
+	<h1>File Upload</h1>
+	
+	<form id="formulario" method="POST" action="http://localhost/test/php/fileupload.php" enctype="multipart/form-data">
+		<div>Progreso: <span id="percent"></span>%</div>
+		<input type="file" name="imagen" onchange="handleOnchange(this)" />
+		<button type="submit">Upload</button>
+	</form>
+	
+	
+	<script>
+		const handleOnchange = (input) => {
+			fileUpload(input.files[0])
+
+			console.log("calling handleOnchange()...")
+			console.dir(input.files)
+			const form = document.getElementById("formulario")
+			const img = document.createElement("img")
+			img.src = URL.createObjectURL(input.files[0])
+			img.height = 60 
+			img.onload = function() {
+				URL.revokeObjectURL(this.src)
+			}
+			form.appendChild(img)			
+
+			
+		}
+
+		const fileUpload = (img) => {
+			const reader = new FileReader()
+			const xhr = new XMLHttpRequest()			
+			const self = this 
+			
+			xhr.upload.addEventListener('progress', function(e){
+				if(e.lengthComputable) {
+					const percentage = Math.round((e.loaded * 100) / e.total)
+					document.getElementById('percent').innerHTML = percentage
+				} 
+			})
+
+			xhr.upload.addEventListener('load', function(e){
+				document.getElementById('percent').innerHTML = 100
+				//const canvas = self.ctrl.ctx.canvas
+				//canvas.parentNode.removeChild(canvas)
+			})			
+
+			const uploadPreset = 'xxxxxxxx'
+			const uploadUrl = 'https://api.cloudinary.com/v1_1/XXXXXXXXXX/image/upload' 
+			//const uploadUrl = 'http://localhost/test/php/fileupload.php'
+
+			const formData = new FormData()
+			formData.append('upload_preset', uploadPreset)
+			formData.append('file', img)			
+			xhr.open('POST', uploadUrl, true)			
+			xhr.send(formData)
+		}
+	</script>
+
+</body>
+</html>
